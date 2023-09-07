@@ -2,6 +2,7 @@ name: 'Installs Atlas'
 description: 'Installs a specific version of Atlas'
 branding:
   icon: database
+  color: 'blue'
 author: 'Ariga'
 inputs:
   version:
