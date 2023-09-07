@@ -2,7 +2,7 @@
 
 A GitHub Action for installing [Atlas](https://github.com/ariga/atlas).
 
-> Please note that other [atlas-actions](https://atlasgo.io/integrations/github-actions) might suit your needs better as they can do more heavy lifting operations
+> See the docs for other [Atlas GitHub Actions](https://atlasgo.io/integrations/github-actions) for operations such as linting, syncing, or deploying your migration directory. 
 
 ## Usage
 
