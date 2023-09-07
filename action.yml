@@ -1,4 +1,4 @@
-name: 'Installs Atlas'
+name: 'Setup Atlas'
 description: 'Installs a specific version of Atlas'
 branding:
   icon: database
