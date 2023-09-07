@@ -4,7 +4,7 @@ A GitHub Action for installing up [Atlas](https://github.com/ariga/atlas).
 
 This action is used for installing Atlas on the Github runner.
 
-> Please note that for most use cases, you should first consider using [Atlas Action](https://github.com/ariga/atlas-action/tree/master) which can save you a lot of work.
+> Please note that for most use cases, you should first consider using [Atlas Action](https://github.com/ariga/atlas-action) which can save you a lot of work.
 
 ### Usage
 

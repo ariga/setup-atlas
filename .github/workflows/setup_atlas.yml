@@ -1,4 +1,4 @@
-name: My Action Name
+name: Setup Atlas
 run-name: I'm using Atlas 🚀
 on: [push]
 jobs:
