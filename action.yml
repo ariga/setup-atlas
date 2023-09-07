@@ -1,0 +1,16 @@
+name: 'Installs Atlas'
+description: 'Installs a specific version of Atlas'
+branding:
+  icon: database
+author: 'Ariga'
+inputs:
+  version:
+    description: 'Which version of Atlas to install, in the format of "v0.14.1"'
+    required: false
+    default: 'latest'
+runs:
+  using: "composite"
+  steps:
+    - run: curl -sSf https://atlasgo.sh | ATLAS_VERSION=${{inputs.version}} CI=true sh
+      shell: bash
+    

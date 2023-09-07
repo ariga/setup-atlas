@@ -1,0 +1,10 @@
+name: Setup Atlas
+run-name: I'm using Atlas 🚀
+on: [push]
+jobs:
+  use-atlas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+      - run: atlas version
