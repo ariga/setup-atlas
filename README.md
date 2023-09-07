@@ -1,17 +1,15 @@
 # setup-action
 
-A GitHub Action for installing up [Atlas](https://github.com/ariga/atlas).
+A GitHub Action for installing [Atlas](https://github.com/ariga/atlas).
 
-This action is used for installing Atlas on the Github runner.
+> Please note that other [atlas-actions](https://atlasgo.io/integrations/github-actions) might suit your needs better as they can do more heavy lifting operations
 
-> Please note that for most use cases, you should first consider using [Atlas Action](https://github.com/ariga/atlas-action) which can save you a lot of work.
+## Usage
 
-### Usage
-
-Add `.github/workflows/setup-atlas.yaml` to your repo with the following contents:
+Add `.github/workflows/deploy-schema.yaml` to your repo with the following contents:
 
 ```yaml
-name: My Action Name
+name: Deploy schema changes
 run-name: I'm using Atlas 🚀
 on: [push]
 jobs:
@@ -20,9 +18,12 @@ jobs:
     steps:
       - uses: ariga/setup-atlas@master
       - run: atlas version
+      # - run: atlas schema apply ... 
 ```
 
-#### version
+## Inputs
+
+### Version
 
 By default, the `latest` version of Atlas is being used. If you want to lock a specific version of Atlas, you can do so by specifing the `version` parameter.
 
@@ -33,7 +34,7 @@ By default, the `latest` version of Atlas is being used. If you want to lock a s
 ```
 
 
-### Legal
+## Legal
 
 The source code for this GitHub Action is released under the Apache 2.0
 License, see [LICENSE](LICENSE).
