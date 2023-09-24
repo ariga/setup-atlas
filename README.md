@@ -39,6 +39,7 @@ The Atlas Cloud token to use for authentication. Must be passed as a secret.
       - uses: ariga/setup-atlas@master
         with:
             cloud-token: ${{ secrets.ATLAS_CLOUD_TOKEN }}
+```
 
 ## Legal
 
