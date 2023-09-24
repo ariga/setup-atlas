@@ -32,7 +32,16 @@ By default, the `latest` version of Atlas is being used. If you want to lock a s
         with:
             version: "vX.Y.Z"
 ```
+### Cloud Token
 
+Some Atlas features require cloud integration, the `cloud-token` is used to authenticate with Atlas Cloud. More information about atlas cloud can be found [here](https://atlasgo.io/cloud/getting-started)
+
+- Note: You should be treating the cloud token as a secret. The below example uses github secrets for that
+```yaml
+      - uses: ariga/setup-atlas@master
+        with:
+            cloud-token: ${{ secrets.ATLAS_CLOUD_TOKEN }}
+```
 
 ## Legal
 
