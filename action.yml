@@ -15,8 +15,14 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: curl -sSf https://atlasgo.sh | ATLAS_VERSION=${{inputs.version}} CI=true sh
+    - if: runner.os != 'Windows'
       shell: bash
+      run: curl -sSf https://atlasgo.sh | ATLAS_VERSION=${{inputs.version}} CI=true sh
+    - if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        New-Item -Path "C:\Users\$env:USERNAME\bin" -ItemType Directory -Force
+        curl -L https://release.ariga.io/atlas/atlas-windows-amd64-latest.exe -o "C:\Users\$env:USERNAME\AppData\Local\Microsoft\WindowsApps\atlas.exe"
     - name: Login to Atlas
       if: inputs.cloud-token != null
       shell: bash

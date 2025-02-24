@@ -1,9 +1,18 @@
 name: Setup Atlas
 run-name: I'm using Atlas 🚀
-on: [push]
+on: 
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 jobs:
   use-atlas:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./
