@@ -21,7 +21,7 @@ jobs:
         id: atlas-version
         shell: bash
         run: |
-          VERSION=$(atlas version | awk '{print $2}')
+          VERSION=$(atlas version | awk '{print $3}')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
       - name: Install Specific Version
         uses: ./
@@ -30,7 +30,8 @@ jobs:
       - name: Verify Version
         shell: bash
         run: |
-          INSTALLED_VERSION=$(atlas version | awk '{print $2}')
+          INSTALLED_VERSION=$(atlas version | awk '{print $3}')
           if [ "$INSTALLED_VERSION" != "${{ steps.atlas-version.outputs.version }}" ]; then
             echo "Version mismatch: expected ${{ steps.atlas-version.outputs.version }}, got $INSTALLED_VERSION"
             exit 1
+          fi
