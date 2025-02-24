@@ -1,10 +1,37 @@
 name: Setup Atlas
 run-name: I'm using Atlas 🚀
-on: [push]
+on: 
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 jobs:
-  use-atlas:
-    runs-on: ubuntu-latest
+  test-versions:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - uses: ./
-      - run: atlas version
+      - name: Install Latest Atlas
+        uses: ./
+      - name: Get Atlas Version
+        id: atlas-version
+        shell: bash
+        run: |
+          VERSION=$(atlas version | awk '{print $3}')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+      - name: Install Specific Version
+        uses: ./
+        with:
+          version: ${{ steps.atlas-version.outputs.version }}
+      - name: Verify Version
+        shell: bash
+        run: |
+          INSTALLED_VERSION=$(atlas version | awk '{print $3}')
+          if [ "$INSTALLED_VERSION" != "${{ steps.atlas-version.outputs.version }}" ]; then
+            echo "Version mismatch: expected ${{ steps.atlas-version.outputs.version }}, got $INSTALLED_VERSION"
+            exit 1
+          fi
