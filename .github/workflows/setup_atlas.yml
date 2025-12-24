@@ -35,8 +35,8 @@ jobs:
             echo "Version mismatch: expected ${{ steps.atlas-version.outputs.version }}, got $INSTALLED_VERSION"
             exit 1
           fi
-      - name: Check Snowflake Flavour installed correctly
+      - name: Check Snowflake flavor installed correctly
         uses: ./
         with:
-          flavour: snowflake
+          flavor: snowflake
 

@@ -41,14 +41,14 @@ If you want to install the beta version of Atlas, specify `beta` as the version:
             version: "beta"
 ```
 
-### Flavour
+### Flavor
 
-If you want to install a specific driver flavour of Atlas, you can do so by specifing the `flavour` parameter. The available flavours are:
+If you want to install a specific driver flavor of Atlas, you can do so by specifing the `flavor` parameter.
 
 ```yaml
       - uses: ariga/setup-atlas@master
         with:
-            flavour: "snowflake"
+          flavor: "snowflake"
 ```
 
 ### cloud-token

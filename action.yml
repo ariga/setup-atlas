@@ -9,8 +9,8 @@ inputs:
     description: 'Which version of Atlas to install, in the format of "v0.14.1"'
     required: false
     default: 'latest'
-  flavour:
-    description: 'Which flavour of Atlas to install'
+  flavor:
+    description: 'Which flavor of Atlas to install'
     required: false
   cloud-token:
     description: API token to authenticate to an Atlas Cloud organization
@@ -21,8 +21,8 @@ runs:
     - if: runner.os != 'Windows'
       shell: bash
       run: |
-        if [ -n "${{ inputs.flavour }}" ]; then
-          curl -sSf https://atlasgo.sh | ATLAS_FLAVOUR=${{ inputs.flavour }} CI=true sh
+        if [ -n "${{ inputs.flavor }}" ]; then
+          curl -sSf https://atlasgo.sh | ATLAS_FLAVOR=${{ inputs.flavor }} CI=true sh
         else
           curl -sSf https://atlasgo.sh | ATLAS_VERSION=${{ inputs.version }} CI=true sh
         fi
@@ -30,7 +30,7 @@ runs:
       shell: pwsh
       run: |
         $version = "${{ inputs.version }}"
-        if ("${{ inputs.flavour }}" -ne "") {
+        if ("${{ inputs.flavor }}" -ne "") {
           $version = "extended"
         }
         $url = "https://release.ariga.io/atlas/atlas-windows-amd64-$version.exe"
