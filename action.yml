@@ -21,11 +21,11 @@ runs:
     - if: runner.os != 'Windows'
       shell: bash
       run: |
-        $version = "${{ inputs.version }}"
+        version="${{ inputs.version }}"
         if [ -n "${{ inputs.flavor }}" ]; then
-          $version = "extended-$version"
+          version="extended-$version"
         fi
-        curl -sSf https://atlasgo.sh | ATLAS_VERSION=${{ inputs.version }} CI=true sh
+        curl -sSf https://atlasgo.sh | ATLAS_VERSION=$version CI=true sh
     - if: runner.os == 'Windows'
       shell: pwsh
       run: |
