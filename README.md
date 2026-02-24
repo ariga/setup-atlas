@@ -52,6 +52,10 @@ The Atlas Cloud token to use for authentication. Must be passed as a secret.
     cloud-token: ${{ secrets.ATLAS_CLOUD_TOKEN }}
 ```
 
+## Reporting Issues
+
+If you encounter any issues or have feature requests, please file an issue on the [ariga/atlas](https://github.com/ariga/atlas/issues/new?labels=setup-atlas) repository with the `setup-atlas` tag.
+
 ## Legal
 
 The source code for this GitHub Action is released under the Apache 2.0
