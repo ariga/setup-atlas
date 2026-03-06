@@ -38,7 +38,23 @@ runs:
         New-Item -Path $targetPath -ItemType Directory -Force
         curl -L $url -o "$targetPath\atlas.exe"
         Add-Content $env:GITHUB_PATH "$targetPath"
-    - name: Login to Atlas
-      if: inputs.cloud-token != null
+    - id: atlas-cache
+      if: inputs.cloud-token != ''
       shell: bash
-      run: atlas login --token ${{ inputs.cloud-token }}
+      run: echo "path=$HOME/.atlas" >> $GITHUB_OUTPUT
+    - name: Cache Atlas Grant
+      if: inputs.cloud-token != ''
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.atlas-cache.outputs.path }}
+        key: atlas-grant-${{ runner.os }}-${{ github.run_id }}
+        restore-keys: |
+          atlas-grant-${{ runner.os }}-
+    - name: Login to Atlas
+      if: inputs.cloud-token != ''
+      shell: bash
+      run: atlas login --token ${{ inputs.cloud-token }} --grant-only
+    - name: Expose Grant
+      if: inputs.cloud-token != ''
+      shell: bash
+      run: echo "ATLAS_TOKEN=${{ inputs.cloud-token }}" >> $GITHUB_ENV
