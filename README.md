@@ -16,7 +16,7 @@ jobs:
   use-atlas:
     runs-on: ubuntu-latest
     steps:
-      - uses: ariga/setup-atlas@master
+      - uses: ariga/setup-atlas@v0
       - run: atlas version
       # - run: atlas schema apply ... 
 ```
@@ -25,40 +25,36 @@ jobs:
 
 ### Version
 
-By default, the `latest` version of Atlas is being used. If you want to lock a specific version of Atlas, you can do so by specifing the `version` parameter.
+By default, the `latest` version of Atlas is being used. If you want to lock a specific version of Atlas, you can do so by specifying the `version` parameter.
 
 ```yaml
-      - uses: ariga/setup-atlas@master
-        with:
-            version: "vX.Y.Z"
-```
-
-If you want to install the beta version of Atlas, specify `beta` as the version:
-
-```yaml
-      - uses: ariga/setup-atlas@master
-        with:
-            version: "beta"
+- uses: ariga/setup-atlas@v0
+  with:
+    version: "vX.Y.Z"
 ```
 
 ### Flavor
 
-If you want to install a specific driver flavor of Atlas, you can do so by specifing the `flavor` parameter.
+If you want to install a specific driver flavor of Atlas, you can do so by specifying the `flavor` parameter.
 
 ```yaml
-      - uses: ariga/setup-atlas@master
-        with:
-          flavor: "snowflake"
+- uses: ariga/setup-atlas@v0
+  with:
+    flavor: "snowflake"
 ```
 
 ### cloud-token
 
 The Atlas Cloud token to use for authentication. Must be passed as a secret.
 ```yaml
-      - uses: ariga/setup-atlas@master
-        with:
-            cloud-token: ${{ secrets.ATLAS_CLOUD_TOKEN }}
+- uses: ariga/setup-atlas@v0
+  with:
+    cloud-token: ${{ secrets.ATLAS_CLOUD_TOKEN }}
 ```
+
+## Reporting Issues
+
+If you encounter any issues or have feature requests, please file an issue on the [ariga/atlas](https://github.com/ariga/atlas/issues/new?labels=setup-atlas) repository with the `setup-atlas` tag.
 
 ## Legal
 
