@@ -42,24 +42,18 @@ runs:
       if: inputs.cloud-token != ''
       shell: bash
       run: echo "path=$HOME/.atlas" >> $GITHUB_OUTPUT
-    - name: Restore Atlas Grant
+    - name: Cache Atlas Grant
       if: inputs.cloud-token != ''
-      uses: actions/cache/restore@v4
+      uses: actions/cache@v4
       with:
         path: ${{ steps.atlas-cache.outputs.path }}
         key: atlas-grant-${{ runner.os }}-${{ github.run_id }}
         restore-keys: |
-          atlas-grant-${{ runner.os }}
+          atlas-grant-${{ runner.os }}-
     - name: Login to Atlas
       if: inputs.cloud-token != ''
       shell: bash
       run: atlas login --token ${{ inputs.cloud-token }} --grant-only
-    - name: Save Atlas Grant
-      if: inputs.cloud-token != ''
-      uses: actions/cache/save@v4
-      with:
-        path: ${{ steps.atlas-cache.outputs.path }}
-        key: atlas-grant-${{ runner.os }}-${{ github.run_id }}
     - name: Expose Grant
       if: inputs.cloud-token != ''
       shell: bash
