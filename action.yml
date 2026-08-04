@@ -38,12 +38,21 @@ runs:
         New-Item -Path $targetPath -ItemType Directory -Force
         curl -L $url -o "$targetPath\atlas.exe"
         Add-Content $env:GITHUB_PATH "$targetPath"
-    - id: atlas-cache
+    - name: Trim Token
       if: inputs.cloud-token != ''
+      id: trim_token
+      shell: bash
+      env:
+        RAW: ${{ inputs.cloud-token }}
+      run: |
+        TRIMMED=$(echo "$RAW" | xargs)
+        echo "trimmed=$TRIMMED" >> $GITHUB_OUTPUT
+    - id: atlas-cache
+      if: steps.trim_token.outputs.trimmed != ''
       shell: bash
       run: echo "path=$HOME/.atlas" >> $GITHUB_OUTPUT
     - name: Cache Atlas Grant
-      if: inputs.cloud-token != ''
+      if: steps.trim_token.outputs.trimmed != ''
       uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
       with:
         path: ${{ steps.atlas-cache.outputs.path }}
@@ -51,10 +60,10 @@ runs:
         restore-keys: |
           atlas-grant-${{ runner.os }}-
     - name: Login to Atlas
-      if: inputs.cloud-token != ''
+      if: steps.trim_token.outputs.trimmed != ''
       shell: bash
-      run: atlas login --token ${{ inputs.cloud-token }} --grant-only
+      run: atlas login --token ${{ steps.trim_token.outputs.trimmed }} --grant-only
     - name: Expose Grant
-      if: inputs.cloud-token != ''
+      if: steps.trim_token.outputs.trimmed != ''
       shell: bash
-      run: echo "ATLAS_TOKEN=${{ inputs.cloud-token }}" >> $GITHUB_ENV
+      run: echo "ATLAS_TOKEN=${{ steps.trim_token.outputs.trimmed }}" >> $GITHUB_ENV
