@@ -62,8 +62,12 @@ runs:
     - name: Login to Atlas
       if: steps.trim_token.outputs.trimmed != ''
       shell: bash
-      run: atlas login --token ${{ steps.trim_token.outputs.trimmed }} --grant-only
+      env:
+        TOKEN: ${{ steps.trim_token.outputs.trimmed }}
+      run: atlas login --token "$TOKEN" --grant-only
     - name: Expose Grant
       if: steps.trim_token.outputs.trimmed != ''
       shell: bash
-      run: echo "ATLAS_TOKEN=${{ steps.trim_token.outputs.trimmed }}" >> $GITHUB_ENV
+      env:
+        TOKEN: ${{ steps.trim_token.outputs.trimmed }}
+      run: echo "ATLAS_TOKEN=$TOKEN" >> $GITHUB_ENV
