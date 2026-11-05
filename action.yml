@@ -18,14 +18,58 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - if: runner.os != 'Windows'
+    - name: Prepare Atlas Install
+      id: atlas-install
+      if: runner.os != 'Windows'
       shell: bash
+      env:
+        INPUT_VERSION: ${{ inputs.version }}
+        INPUT_FLAVOR: ${{ inputs.flavor }}
       run: |
-        version="${{ inputs.version }}"
-        if [ -n "${{ inputs.flavor }}" ]; then
+        version="$INPUT_VERSION"
+        if [ -n "$INPUT_FLAVOR" ]; then
           version="extended-$version"
         fi
-        curl -sSf https://atlasgo.sh | ATLAS_VERSION=$version CI=true sh
+        echo "version=$version" >> "$GITHUB_OUTPUT"
+        echo "dir=$HOME/.atlas-bin" >> "$GITHUB_OUTPUT"
+        # Cache keys cannot contain commas, keep them to a safe character set.
+        echo "key=atlas-bin-v1-$RUNNER_OS-$RUNNER_ARCH-${version//[^A-Za-z0-9._-]/_}-" >> "$GITHUB_OUTPUT"
+    - name: Restore Atlas Binary
+      id: atlas-bin-cache
+      if: runner.os != 'Windows'
+      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+      with:
+        path: ${{ steps.atlas-install.outputs.dir }}
+        # Saved keys carry the installed build, so this never hits exactly and
+        # always falls back to the most recent entry for this version.
+        key: ${{ steps.atlas-install.outputs.key }}
+        restore-keys: |
+          ${{ steps.atlas-install.outputs.key }}
+    - name: Install Atlas
+      id: atlas-install-run
+      if: runner.os != 'Windows'
+      shell: bash
+      env:
+        ATLAS_VERSION: ${{ steps.atlas-install.outputs.version }}
+        ATLAS_BIN_DIR: ${{ steps.atlas-install.outputs.dir }}
+      run: |
+        mkdir -p "$ATLAS_BIN_DIR"
+        # The installer skips the download if the binary at the target path
+        # (e.g. restored from the cache) already matches the requested version.
+        curl -sSf https://atlasgo.sh | CI=true sh -s -- -o "$ATLAS_BIN_DIR/atlas"
+        echo "$ATLAS_BIN_DIR" >> "$GITHUB_PATH"
+        # The exact build (e.g. v1.3.8-f6d4fcb-canary) names the cache entry.
+        installed="$("$ATLAS_BIN_DIR/atlas" version | awk 'NR==1 {print $3}')"
+        echo "installed=${installed//[^A-Za-z0-9._-]/_}" >> "$GITHUB_OUTPUT"
+    - name: Save Atlas Binary
+      # Only save when the binary changed: caches are immutable and keyed by the installed build.
+      if: >-
+        runner.os != 'Windows' &&
+        steps.atlas-bin-cache.outputs.cache-matched-key != format('{0}{1}', steps.atlas-install.outputs.key, steps.atlas-install-run.outputs.installed)
+      uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+      with:
+        path: ${{ steps.atlas-install.outputs.dir }}
+        key: ${{ steps.atlas-install.outputs.key }}${{ steps.atlas-install-run.outputs.installed }}
     - if: runner.os == 'Windows'
       shell: pwsh
       run: |
