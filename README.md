@@ -52,6 +52,13 @@ The Atlas Cloud token to use for authentication. Must be passed as a secret.
     cloud-token: ${{ secrets.ATLAS_CLOUD_TOKEN }}
 ```
 
+## Caching
+
+On Linux and macOS the binary is installed to `~/.atlas-bin` and cached between runs with
+[actions/cache](https://github.com/actions/cache), keyed by OS, architecture, requested version and the installed build.
+When the cached binary is already up to date, the download is skipped. `latest` always checks for a newer
+release, and a new cache entry is saved only when the binary has changed.
+
 ## Reporting Issues
 
 If you encounter any issues or have feature requests, please file an issue on the [ariga/atlas](https://github.com/ariga/atlas/issues/new?labels=setup-atlas) repository with the `setup-atlas` tag.
