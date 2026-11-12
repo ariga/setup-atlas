@@ -91,15 +91,14 @@ runs:
       run: |
         TRIMMED=$(echo "$RAW" | xargs)
         echo "trimmed=$TRIMMED" >> $GITHUB_OUTPUT
-    - id: atlas-cache
-      if: steps.trim_token.outputs.trimmed != ''
-      shell: bash
-      run: echo "path=$HOME/.atlas" >> $GITHUB_OUTPUT
     - name: Cache Atlas Grant
       if: steps.trim_token.outputs.trimmed != ''
       uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
       with:
-        path: ${{ steps.atlas-cache.outputs.path }}
+        # Cache only the grant files; the CLI's other state under ~/.atlas is not needed across runs.
+        path: |
+          ~/.atlas/token.db
+          ~/.atlas/release.json
         key: atlas-grant-${{ runner.os }}-${{ github.run_id }}
         restore-keys: |
           atlas-grant-${{ runner.os }}-
