@@ -40,9 +40,15 @@ jobs:
         with:
           flavor: snowflake
   grant-cache-save:
-    # Secrets are not passed to pull requests from forks.
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: ubuntu-latest
+    # Secrets are not passed to pull requests from forks or Dependabot.
+    if: >-
+      github.event_name == 'push' ||
+      (github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]')
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Check Cloud Token
         shell: bash
@@ -63,7 +69,11 @@ jobs:
         run: mkdir -p ~/.atlas/other && echo probe > ~/.atlas/other/probe
   grant-cache-restore:
     needs: grant-cache-save
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     permissions:
       actions: write # Delete the cache entry below.
       contents: read
@@ -80,19 +90,36 @@ jobs:
           fail-on-cache-miss: true
       - name: Verify Grant Cache Contents
         shell: bash
+        # /usr/bin/find, as find on the Windows PATH can be find.exe.
         run: |
           cd ~/.atlas
-          find . -type f
+          /usr/bin/find . -type f
           if [ ! -f token.db ]; then
             echo "::error::token.db is missing from the grant cache"
             exit 1
           fi
-          extra=$(find . -type f ! -path ./token.db ! -path ./release.json)
+          extra=$(/usr/bin/find . -type f ! -path ./token.db ! -path ./release.json)
           if [ -n "$extra" ]; then
             echo "::error::Unexpected files in the grant cache: $extra"
             exit 1
           fi
-      - name: Install Atlas with Restored Grant
+      # Install without a token, so no online login replaces the restored grant.
+      - name: Install Atlas
+        uses: ./
+      - name: Verify Cached Grant Offline
+        shell: bash
+        env:
+          TOKEN: ${{ secrets.ATLAS_CLOUD_TOKEN }}
+          # Atlas Cloud is unreachable through this proxy, so the CLI must use the cached grant.
+          HTTPS_PROXY: http://127.0.0.1:9
+        run: |
+          atlas login --token "$TOKEN" --grant-only
+          ATLAS_TOKEN="$TOKEN" atlas whoami
+          if HOME="$(mktemp -d)" atlas login --token "$TOKEN" --grant-only; then
+            echo "::error::Login succeeded without a cached grant, so Atlas Cloud was reachable"
+            exit 1
+          fi
+      - name: Install Atlas with Cloud Token
         uses: ./
         with:
           cloud-token: ${{ secrets.ATLAS_CLOUD_TOKEN }}
