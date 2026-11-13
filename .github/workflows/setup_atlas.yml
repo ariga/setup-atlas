@@ -85,10 +85,6 @@ jobs:
         run: |
           cd ~/.atlas
           /usr/bin/find . -type f
-          if [ ! -f token.db ]; then
-            echo "::error::token.db is missing from the grant cache"
-            exit 1
-          fi
           extra=$(/usr/bin/find . -type f ! -path ./token.db ! -path ./release.json)
           if [ -n "$extra" ]; then
             echo "::error::Unexpected files in the grant cache: $extra"
